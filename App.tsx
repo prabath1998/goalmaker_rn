@@ -1,39 +1,54 @@
 import React, { useState } from 'react';
 import {
-  SafeAreaView,
-  Text,
   View,
-  StatusBar,
   StyleSheet,
   Button,
   TextInput,
+  FlatList,
 } from 'react-native';
 
-
+import GoalItem from './components/GoalItem';
 
 function App() {
+  const [enteredGoalText, setEnteredGoalText] = useState('');
+  const [courseGoals, setCourseGoals] = useState([] as any[]);
 
-  const [enteredGoalText,setEnteredGoalText] = useState({});
+  function goalInputHandler(enteredText: any) {
+    setEnteredGoalText(enteredText);
+  }
 
-function goalInputHandler(enteredText:string) { 
-  setEnteredGoalText(enteredText);
-  
-};
+  function addGoalHandler() {
+    setCourseGoals(currentCourseGoals => [
+      ...currentCourseGoals,
+      {text:enteredGoalText, id:Math.random().toString()},
+    ]);
+  }
 
-function addGoalHandler() {
-  console.log(enteredGoalText);
-  
- };
-
-  return <View style={styles.appContainer}>
-    <View style={styles.inputContainer}>
-      <TextInput placeholder='Your course goal' style={styles.textInput} onChangeText={goalInputHandler} />
-      <Button title='Add Goal' onPress={addGoalHandler}/>
+  return (
+    <View style={styles.appContainer}>
+      <View style={styles.inputContainer}>
+        <TextInput
+          placeholder="Your course goal"
+          style={styles.textInput}
+          onChangeText={goalInputHandler}
+        />
+        <Button title="Add Goal" onPress={addGoalHandler} />
+      </View>
+      <View style={styles.goalsContainer}>
+        <FlatList
+          data={courseGoals}
+          renderItem={(itemData) => {
+            return (
+             <GoalItem text={itemData.item.text}/>
+            );
+          }}
+          keyExtractor={(item,index) => {
+            return item.id;
+          }}
+        />
+      </View>
     </View>
-    <View style={styles.goalsContainer}>
-      <Text>List Of Goals</Text>
-    </View>
-  </View>;
+  );
 }
 
 const styles = StyleSheet.create({
@@ -41,7 +56,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 50,
     paddingHorizontal: 16,
-
   },
   inputContainer: {
     flexDirection: 'row',
@@ -50,18 +64,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
     borderBottomWidth: 1,
-    borderBottomColor: '#cccccc'
+    borderBottomColor: '#cccccc',
   },
   textInput: {
     borderWidth: 1,
     borderColor: '#cccccc',
     width: '70%',
     marginRight: 8,
-    padding: 8
+    padding: 8,
   },
   goalsContainer: {
-    flex: 4
-  }
+    flex: 4,
+  },
+
 });
 
 export default App;
